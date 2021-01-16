@@ -1,0 +1,29 @@
+---
+
+version: '3'
+
+services:
+  puppet:
+    container_name: puppet
+    hostname: puppet
+    image: puppet/puppetserver
+    networks: 
+      - internal
+    environment:
+      - AUTOSIGN=true
+      - PUPPET_STORECONFIGS=false
+      - USE_PUPPETDB=false
+
+  agent:
+    container_name: agent
+    hostname: agent
+    image: ${DC_AGENT_IMAGE:-centos7}
+    extra_hosts:
+      puppet: ${PUPPET_MASTER_IP}
+    depends_on:
+      - puppet
+    networks:
+      - internal
+
+networks:
+  internal: 
